@@ -152,7 +152,15 @@ def server(log_buffer=sys.stderr):
 
                     # TODO: Use response_path to retrieve the content and the mimetype,
                     # based on the request path.
-                    content, mimetype = response_path(path)
+                    try:
+                        content, mimetype = response_path(path)
+                        response = response_ok(
+                            body = content,
+                            mimetype = mimetype
+                        )
+
+                    except NameError:
+                        response = response_not_found()
 
                     # TODO; If parse_request raised a NotImplementedError, then let
                     # response be a method_not_allowed response. If response_path raised
@@ -161,10 +169,10 @@ def server(log_buffer=sys.stderr):
                     # response_ok.
 
 
-                    response = response_ok(
-                        body = content,
-                        mimetype = mimetype
-                    )
+                    # response = response_ok(
+                    #     body = content,
+                    #     mimetype = mimetype
+                    # )
                 except NotImplementedError:
                     response = response_method_not_allowed()
 
