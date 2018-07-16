@@ -107,17 +107,20 @@ def response_path(path):
     # CONTENTS of `make_time.py`.
 
     local_path = os.path.join('webroot', *path.split('/'))
-    web_path = '/' + path
 
-    if os.path.isfile(local_path):
+    if os.path.isdir(local_path):
+        content = '\r\n'.join(os.listdir(local_path)).encode()
+        mime_type = 'text/plain'.encode()
+
+    elif os.path.isfile(local_path):
         with open(local_path, 'rb') as f:
             content = f.read()
         mime_type = mimetypes.guess_type(local_path)[0].encode()
+
     else:
         raise NameError
 
     return content, mime_type
-
 
 def server(log_buffer=sys.stderr):
     address = ('127.0.0.1', 10000)
@@ -168,11 +171,6 @@ def server(log_buffer=sys.stderr):
                     # use the content and mimetype from response_path to build a 
                     # response_ok.
 
-
-                    # response = response_ok(
-                    #     body = content,
-                    #     mimetype = mimetype
-                    # )
                 except NotImplementedError:
                     response = response_method_not_allowed()
 
